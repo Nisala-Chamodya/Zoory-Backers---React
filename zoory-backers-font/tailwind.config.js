@@ -11,7 +11,10 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
+  daisyui: {
+    darkTheme: "light",
+  },
 };
 /*   fontFamily: {
         primary: ["Inter", "sans-serif"],
