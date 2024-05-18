@@ -9,3 +9,9 @@ body {
 .section-container {
   @apply container px-4 mx-auto max-w-screen-2xl xl:px-24;
 }
+.subtitle {
+  @apply text-lg font-medium tracking-wide uppercase text-red;
+}
+.title {
+  @apply my-2 text-4xl font-bold leading-snug md:text-5xl md:leading-snug;
+}
