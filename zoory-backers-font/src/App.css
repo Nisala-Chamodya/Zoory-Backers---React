@@ -3,3 +3,6 @@
 body {
   font-family: "Inter", sans-serif;
 }
+.section-container {
+  @apply container px-4 mx-auto max-w-screen-2xl xl:px-24;
+}
