@@ -3,7 +3,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import Cards from "./Cards";
+import Cards from "../../component/Cards";
 
 const SpecialDishes = () => {
   const [recipes, setRecipes] = useState([]);
