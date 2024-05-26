@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../public/logo.png";
 import { FaUser } from "react-icons/fa";
+import Modal from "./Modal";
 const Navbar = () => {
   {
     /*start scroll beheviour */
@@ -160,11 +161,17 @@ const Navbar = () => {
           </div>
           {/*end cart */}
 
-          {/* Button */}
-          <button className="flex items-center gap-2 px-5 mr-32 rounded-full btn bg-[#FF9800] text-slate-100">
+          {/* Login Button */}
+          <button
+            onClick={() => document.getElementById("my_modal_5").showModal()}
+            className="flex items-center gap-2 px-5 mr-32 rounded-full btn bg-[#FF9800] text-slate-100"
+          >
             <FaUser className="bg-[#FF9800]" />
             Login
           </button>
+          {/*start login model  */}
+          <Modal />
+          {/*end login model */}
         </div>
       </div>
     </header>
