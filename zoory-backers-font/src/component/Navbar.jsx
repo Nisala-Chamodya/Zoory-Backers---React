@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import logo from "../../public/logo.png";
 import { FaUser } from "react-icons/fa";
 import Modal from "./Modal";
+import { AuthContext } from "../contexts/AuthProvider";
 const Navbar = () => {
   {
     /*start scroll beheviour */
   }
 
   const [isSticky, setSticky] = useState(false);
+
+  const { user } = useContext(AuthContext);
+  console.log(user);
   useEffect(() => {
     const handleScroll = () => {
       const offSet = window.scrollY;
