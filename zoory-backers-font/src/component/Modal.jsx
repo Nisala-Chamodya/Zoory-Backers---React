@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaFacebookF, FaGithub, FaGoogle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthProvider";
 
 const Modal = () => {
   {
@@ -14,11 +15,44 @@ const Modal = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => console.log(data);
+  const { signUpWithGmail, login } = useContext(AuthContext);
+  const [errorMessage, setErrorMessage] = useState("");
+  //redirecting  to the home page or specific page
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from?.pathname || "/";
+
+  const onSubmit = (data) => {
+    const email = data.email;
+    const password = data.password;
+    // console.log(email + " " + " " + password);
+    login(email, password)
+      .then((result) => {
+        const user = result.user;
+        alert("Login Successfull");
+        document.getElementById("my_modal_5").close();
+        navigate(from, { replace: true });
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        setErrorMessage("Provide a Correct email and password");
+      });
+  };
 
   {
     /*end react form hook */
   }
+
+  //google SignIn
+  const handleLogin = () => {
+    signUpWithGmail()
+      .then((result) => {
+        const user = result.user;
+        alert("Login SuccessFull");
+        navigate(from, { replace: true });
+      })
+      .catch((error) => console.log(error.message));
+  };
   return (
     <dialog id="my_modal_5" className="modal modal-middle sm:modal-middle">
       <div className="modal-box">
@@ -60,6 +94,11 @@ const Modal = () => {
               </label>
             </div>
             {/*start error txt */}
+            {errorMessage ? (
+              <p className="text-xs italic text-red">{errorMessage}</p>
+            ) : (
+              ""
+            )}
 
             {/*end error txt */}
 
@@ -95,7 +134,10 @@ const Modal = () => {
 
           {/*start log with social media*/}
           <div className="mb-5 space-x-5 text-center">
-            <button className="btn btn-circle hover:bg-orange">
+            <button
+              className="btn btn-circle hover:bg-orange"
+              onClick={handleLogin}
+            >
               <FaGoogle />
             </button>
             <button className="btn btn-circle hover:bg-orange">

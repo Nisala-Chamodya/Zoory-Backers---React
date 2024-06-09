@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { FaFacebook, FaGithub, FaGoogle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Modal from "./Modal";
+import { AuthContext } from "../contexts/AuthProvider";
 
 const Signup = () => {
   {
@@ -15,7 +16,27 @@ const Signup = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => console.log(data);
+  const { createUser, login } = useContext(AuthContext);
+  //redirecting  to the home page or specific page
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from?.pathname || "/";
+
+  const onSubmit = (data) => {
+    const email = data.email;
+    const password = data.password;
+    createUser(email, password)
+      .then((result) => {
+        const user = result.user;
+        alert("Account Creation Successfull");
+        document.getElementById("my_modal_5").close();
+        navigate(from, { replace: true });
+      })
+      .catch((error) => {
+        const userCode = error.code;
+        const errorMessage = error.message;
+      });
+  };
 
   {
     /*end react form hook */

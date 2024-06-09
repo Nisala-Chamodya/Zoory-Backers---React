@@ -3,38 +3,23 @@ import logo from "../../public/logo.png";
 import { FaUser } from "react-icons/fa";
 import Modal from "./Modal";
 import { AuthContext } from "../contexts/AuthProvider";
+import Profile from "./Profile"; // Ensure the case matches the file name
+
 const Navbar = () => {
-  {
-    /*start scroll beheviour */
-  }
-
   const [isSticky, setSticky] = useState(false);
-
   const { user } = useContext(AuthContext);
-  console.log(user);
+
   useEffect(() => {
     const handleScroll = () => {
-      const offSet = window.scrollY;
-      if (offSet > 0) {
-        setSticky(true);
-      } else {
-        setSticky(false);
-      }
+      setSticky(window.scrollY > 0);
     };
-    // Attach the event listener when the component mounts
-    window.addEventListener("scroll", handleScroll);
 
-    // Detach the event listener when the component unmounts
+    window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  //end handle scroll
-
-  {
-    /*end scroll beheviour */
-  }
   const NavItems = (
     <>
       <li>
@@ -48,33 +33,32 @@ const Navbar = () => {
               <a href="/menu">All</a>
             </li>
             <li>
-              <a>Buns</a>
+              <a href="/menu#buns">Buns</a>
             </li>
             <li>
-              <a>Cake</a>
+              <a href="/menu#cake">Cake</a>
             </li>
           </ul>
         </details>
       </li>
-
       <li tabIndex={0}>
         <details>
           <summary>Services</summary>
           <ul className="p-2">
             <li>
-              <a>Online Order</a>
+              <a href="/services#online-order">Online Order</a>
             </li>
             <li>
-              <a>Table Booking</a>
+              <a href="/services#table-booking">Table Booking</a>
             </li>
             <li>
-              <a>Order Tacking</a>
+              <a href="/services#order-tracking">Order Tracking</a>
             </li>
           </ul>
         </details>
       </li>
       <li>
-        <a>Offers</a>
+        <a href="/offers">Offers</a>
       </li>
     </>
   );
@@ -83,9 +67,7 @@ const Navbar = () => {
     <header className="container fixed top-0 left-0 right-0 mx-auto transition-all duration-300 ease-in-out max-w-screen-2xl">
       <div
         className={`navbar xl:px-24 ${
-          isSticky
-            ? "shadow-md bg-base-100 transition-all duration-300 ease-in-out"
-            : ""
+          isSticky ? "shadow-md bg-base-100 transition-all duration-300 ease-in-out" : ""
         }`}
       >
         <div className="navbar-start">
@@ -114,14 +96,13 @@ const Navbar = () => {
             </ul>
           </div>
           <a href="/">
-            <img src={logo} alt="logo.png" className="w-auto h-[80px]" />{" "}
+            <img src={logo} alt="Logo" className="w-auto h-[80px]" />
           </a>
         </div>
         <div className="hidden navbar-center lg:flex">
           <ul className="px-1 menu menu-horizontal">{NavItems}</ul>
         </div>
         <div className="navbar-end">
-          {/*start search btn */}
           <button className="hidden btn btn-ghost btn-circle lg:flex">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -138,8 +119,6 @@ const Navbar = () => {
               />
             </svg>
           </button>
-          {/*end search btn */}
-          {/*start cart */}
           <div
             tabIndex={0}
             role="button"
@@ -163,19 +142,18 @@ const Navbar = () => {
               <span className="badge badge-sm indicator-item">8</span>
             </div>
           </div>
-          {/*end cart */}
-
-          {/* Login Button */}
-          <button
-            onClick={() => document.getElementById("my_modal_5").showModal()}
-            className="flex items-center gap-2 px-5 mr-32 rounded-full btn bg-[#FF9800] text-slate-100"
-          >
-            <FaUser className="bg-[#FF9800]" />
-            Login
-          </button>
-          {/*start login model  */}
+          {user ? (
+            <Profile user={user} />
+          ) : (
+            <button
+              onClick={() => document.getElementById("my_modal_5").showModal()}
+              className="flex items-center gap-2 px-5 mr-32 rounded-full btn bg-[#FF9800] text-slate-100"
+            >
+              <FaUser className="bg-[#FF9800]" />
+              Login
+            </button>
+          )}
           <Modal />
-          {/*end login model */}
         </div>
       </div>
     </header>
