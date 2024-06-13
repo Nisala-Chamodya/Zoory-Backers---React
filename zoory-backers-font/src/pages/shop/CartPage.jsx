@@ -1,15 +1,28 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FaTrash } from 'react-icons/fa';
 import useCart from '../../hooks/useCart';
 import Swal from 'sweetalert2';
+import { AuthContext } from '../../contexts/AuthProvider';
+import { Link } from 'react-router-dom';
 
 const CartPage = () => {
   const [cart, refetch] = useCart();
+  const { user } = useContext(AuthContext);
+ // const [cartItems, setcartItems] = useState([]);
+  // Calculate price
+  const calculatePrice = (item) => {
+    return item.price * item.quantity;
+  };
 
-  //Handle delete button
+  // Calculate total price
+  const cartSubTotal = cart.reduce((total, item) => {
+    return total + calculatePrice(item);
+  }, 0);
+  const orderTotal = cartSubTotal;
 
-  const handleDelete =(item)=>{
-       Swal.fire({
+  // Handle delete button
+  const handleDelete = (item) => {
+    Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
       icon: "warning",
@@ -26,14 +39,46 @@ const CartPage = () => {
             if (data.deletedCount > 0) {
               Swal.fire({
                 title: "Deleted!",
-                text: "Your file has been deleted.",
+                text: "Your item has been deleted.",
                 icon: "success",
               });
             }
           });
       }
     });
-  }
+  };
+
+  // Handle increase quantity
+  const handleIncrease = (item) => {
+    fetch(`http://localhost:6001/carts/${item._id}`, {
+      method: "PUT",
+      headers: {
+        "content-type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify({ quantity: item.quantity + 1 }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        refetch();
+      });
+  };
+
+  // Handle decrease quantity
+  const handleDecrease = (item) => {
+    if (item.quantity > 1) {
+      fetch(`http://localhost:6001/carts/${item._id}`, {
+        method: "PUT",
+        headers: {
+          "content-type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify({ quantity: item.quantity - 1 }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          refetch();
+        });
+    }
+  };
 
   return (
     <div className='section-container'>
@@ -80,20 +125,20 @@ const CartPage = () => {
                 </td>
                 <td className="font-medium">{item.name}</td>
                 <td>
-                  <button className="btn btn-xs">-</button>
+                  <button className="btn btn-xs" onClick={() => handleDecrease(item)}>-</button>
                   <input
                     type="number"
                     value={item.quantity}
                     className="w-10 mx-2 overflow-hidden text-center appearance-none"
                     readOnly
                   />
-                  <button className="px-2 btn btn-xs">+</button>
+                  <button className="px-2 btn btn-xs" onClick={() => handleIncrease(item)}>+</button>
                 </td>
-                <td>{item.price}</td>
+                <td>R.S {calculatePrice(item).toFixed(2)}</td>
                 <th>
                   <button
                     className="btn btn-ghost text-red btn-xs"
-                     onClick={() => handleDelete(item)}
+                    onClick={() => handleDelete(item)}
                   >
                     <FaTrash />
                   </button>
@@ -104,6 +149,32 @@ const CartPage = () => {
         </table>
       </div>
       {/* end table for the cart */}
+
+      {/* start customer details */}
+      <div className="flex flex-col items-start justify-between my-12 mt-10 md:flex-row">
+        <div className="space-y-3 md:w-1/2">
+          <h3 className="font-medium">Customer Details</h3>
+          {/* Check if user exists before accessing its properties */}
+          {user && (
+            <>
+              <p>User_Id : - {user.uid}</p>
+              <p>Name : - {user.displayName}</p>
+              <p>Email : - {user.email}</p>
+            </>
+          )}
+        </div>
+        <div className="space-y-3 md:w-1/2">
+          <h3 className="font-medium">Shopping details</h3>
+          <p>Total Items : {cart.length}</p>
+          <p>Total Price : R.S {orderTotal.toFixed(2)}</p>
+          <Link to="/process-checkout">
+            <button className="mt-5 text-white btn bg-orange">
+              Proceed Checkout
+            </button>
+          </Link>
+        </div>
+      </div>
+      {/* end customer details */}
     </div>
   );
 };

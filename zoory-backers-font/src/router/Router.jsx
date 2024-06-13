@@ -6,6 +6,9 @@ import Signup from "../component/Signup";
 import PrivateRouter from "../PrivateRouter/PrivateRouter";
 import UpdateProfile from "../pages/Dashboard/UpdateProfile";
 import CartPage from "../pages/shop/CartPage";
+import DashboardLayout from "../layout/DashboardLayout";
+import Dashboard from "../pages/Dashboard/admin/Dashboard";
+import Users from "../pages/Dashboard/admin/Users";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -34,6 +37,21 @@ const router = createBrowserRouter([
     path: "/signup",
     element: <Signup />,
   },
+  {
+    path:'/dashboard',
+    element:<DashboardLayout/>,
+    children:[
+      {
+        path:"",
+        element:<Dashboard/>
+      },
+      {
+        path:"users",
+        element:<Users/>
+      }
+
+    ]
+  }
 ]);
 
 export default router;
