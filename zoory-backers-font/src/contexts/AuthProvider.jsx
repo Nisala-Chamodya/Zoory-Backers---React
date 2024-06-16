@@ -1,7 +1,4 @@
-// Import necessary modules
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { createContext } from "react";
+import React, { useEffect, useState, createContext } from "react";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -13,6 +10,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import app from "../firebase/firebase.config";
+import axios from "axios";
 
 // Initialize Firebase authentication
 const auth = getAuth(app);
@@ -27,47 +25,100 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Create an Account
-  const createUser = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+  const createUser = async (email, password) => {
+    setLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      setLoading(false);
+      return userCredential;
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
   };
 
   // Sign up with Google
-  const signUpWithGmail = () => {
-    return signInWithPopup(auth, googleProvider);
+  const signUpWithGmail = async () => {
+    setLoading(true);
+    try {
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      setLoading(false);
+      return userCredential;
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
   };
 
   // Login with email and password
-  const login = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
+  const login = async (email, password) => {
+    setLoading(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      setLoading(false);
+      return userCredential;
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
   };
 
   // Log out
-  const logOut = () => {
-    return signOut(auth); // Return the signOut promise
+  const logOut = async () => {
+    setLoading(true);
+    try {
+      await signOut(auth);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
   };
 
   // Update user profile
-  const updateUserProfile = (name, photoURL) => {
-    return updateProfile(auth.currentUser, {
-      displayName: name,
-      photoURL: photoURL,
-    });
+  const updateUserProfile = async (name, photoURL) => {
+    setLoading(true);
+    try {
+      await updateProfile(auth.currentUser, {
+        displayName: name,
+        photoURL: photoURL,
+      });
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
   };
 
   // Check signed-in user
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
       if (currentUser) {
-        setUser(currentUser);
-        setLoading(false);
+        const userInfo = { email: currentUser.email };
+        axios
+          .post("http://localhost:6001/jwt", userInfo)
+          .then((response) => {
+            if (response.data.token) {
+              localStorage.setItem("access-token", response.data.token);
+            }
+            setLoading(false);
+          })
+          .catch(() => setLoading(false));
       } else {
-        setUser(null); // Set user to null when signed out
+        localStorage.removeItem("access-token");
         setLoading(false);
       }
     });
-    return () => {
-      unsubscribe(); // Call unsubscribe function to detach listener when component unmounts
-    };
+    return () => unsubscribe();
   }, []);
 
   // Auth context information
@@ -82,7 +133,9 @@ const AuthProvider = ({ children }) => {
   };
 
   // Provide AuthContext to children components
-  return <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;

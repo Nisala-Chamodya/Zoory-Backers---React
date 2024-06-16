@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthProvider";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 const Cards = ({ item }) => {
   const { name, image, price, recipe, _id } = item;
@@ -16,13 +16,21 @@ const Cards = ({ item }) => {
 
   const handleAddToCart = (item) => {
     if (user && user?.email) {
-      const cartItem = { menuItemId: _id, name, quantity: 1, image, price, email: user.email };
+      const cartItem = {
+        menuItemId: _id,
+        name,
+        quantity: 1,
+        image,
+        price,
+        email: user.email,
+      };
+      console.log(cartItem);
       fetch("http://localhost:6001/carts", {
         method: "POST",
         headers: {
-          'content-type': 'application/json'
+          "content-type": "application/json",
         },
-        body: JSON.stringify(cartItem)
+        body: JSON.stringify(cartItem),
       })
         .then((res) => {
           if (res.ok) {
@@ -33,7 +41,7 @@ const Cards = ({ item }) => {
               icon: "warning",
               title: "The Item Already Added To The Cart",
               showConfirmButton: false,
-              timer: 1500
+              timer: 1500,
             });
             throw new Error(`Failed to add item to cart - ${res.statusText}`);
           }
@@ -45,7 +53,7 @@ const Cards = ({ item }) => {
               icon: "success",
               title: "The Item Added To The Cart",
               showConfirmButton: false,
-              timer: 1500
+              timer: 1500,
             });
           } else {
             console.error("Unexpected response format:", data);
@@ -62,10 +70,10 @@ const Cards = ({ item }) => {
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Signup Now!"
+        confirmButtonText: "Signup Now!",
       }).then((result) => {
         if (result.isConfirmed) {
-          navigate('/signup', { state: { from: window.location.pathname } });
+          navigate("/signup", { state: { from: window.location.pathname } });
         }
       });
     }
@@ -76,7 +84,9 @@ const Cards = ({ item }) => {
       {/*start card */}
       <div className="relative shadow-xl card w-96 bg-base-100">
         <div
-          className={`rating gap-1 absolute right-2 top-2 p-4 heartStar bg-[#FF9800] ${isHeartFilled ? "text-rose-500" : "text-white"}`}
+          className={`rating gap-1 absolute right-2 top-2 p-4 heartStar bg-[#FF9800] ${
+            isHeartFilled ? "text-rose-500" : "text-white"
+          }`}
           onClick={handleHeartClicked}
         >
           <FaHeart className="w-5 h-5 cursor-pointer" />
@@ -100,7 +110,12 @@ const Cards = ({ item }) => {
               <span className="text-sm text-red">R.S.</span>
               {item.price}
             </h5>
-            <button className="btn bg-[#FF9800] text-white" onClick={() => handleAddToCart(item)}>Buy Now</button>
+            <button
+              className="btn bg-[#FF9800] text-white"
+              onClick={() => handleAddToCart(item)}
+            >
+              Buy Now
+            </button>
           </div>
         </div>
       </div>

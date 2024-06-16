@@ -1,20 +1,20 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../contexts/AuthProvider";
-
+import { Link } from "react-router-dom";
 
 const Profile = ({ user }) => {
-  const {logOut}=useContext(AuthContext);
- const handleLogout=() =>{
-  logOut().then(() => {
-  // Sign-out successful.
-  alert("logout");
-  
-}).catch((error) => {
-  // An error happened.
-  alert(error);
-});
-
- }
+  const { logOut } = useContext(AuthContext);
+  const handleLogout = () => {
+    logOut()
+      .then(() => {
+        // Sign-out successful.
+        alert("logout");
+      })
+      .catch((error) => {
+        // An error happened.
+        alert(error);
+      });
+  };
   return (
     <div>
       <div className="z-50 drawer drawer-end">
@@ -26,10 +26,7 @@ const Profile = ({ user }) => {
           >
             <div className="w-10 rounded-full">
               {user.photoURL ? (
-                <img
-                  alt="User profile"
-                  src={user.photoURL}
-                />
+                <img alt="User profile" src={user.photoURL} />
               ) : (
                 <img
                   alt="Default profile"
@@ -54,6 +51,9 @@ const Profile = ({ user }) => {
             </li>
             <li>
               <a>Setting</a>
+            </li>
+            <li>
+              <Link to="/dashboard">Dashboard</Link>
             </li>
             <li>
               <a onClick={handleLogout}>Logout</a>

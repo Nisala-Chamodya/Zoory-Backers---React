@@ -3,66 +3,56 @@ import { useForm } from "react-hook-form";
 import { FaFacebookF, FaGithub, FaGoogle } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthProvider";
+import axios from "axios";
 
 const Modal = () => {
-  {
-    /*start react form hook */
-  }
+  // Start react form hook
   const {
     register,
     handleSubmit,
-
     formState: { errors },
   } = useForm();
-
   const { signUpWithGmail, login } = useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState("");
-  //redirecting  to the home page or specific page
   const location = useLocation();
   const navigate = useNavigate();
   const from = location.state?.from?.pathname || "/";
 
-  const onSubmit = (data) => {
-    const email = data.email;
-    const password = data.password;
-    // console.log(email + " " + " " + password);
-    login(email, password)
-      .then((result) => {
-        const user = result.user;
-        alert("Login Successfull");
-        document.getElementById("my_modal_5").close();
-        navigate(from, { replace: true });
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        setErrorMessage("Provide a Correct email and password");
-      });
+  const onSubmit = async (data) => {
+    try {
+      const result = await login(data.email, data.password);
+      const user = result.user;
+      const userInfor = { name: user.displayName, email: user.email };
+      await axios.post("http://localhost:6001/users", userInfor);
+      alert("Login Successful");
+      document.getElementById("my_modal_5").close();
+      navigate(from, { replace: true });
+    } catch (error) {
+      setErrorMessage("Provide a correct email and password");
+    }
   };
 
-  {
-    /*end react form hook */
-  }
-
-  //google SignIn
-  const handleLogin = () => {
-    signUpWithGmail()
-      .then((result) => {
-        const user = result.user;
-        alert("Login SuccessFull");
-        navigate(from, { replace: true });
-      })
-      .catch((error) => console.log(error.message));
+  // Google SignIn
+  const handleLogin = async () => {
+    try {
+      const result = await signUpWithGmail();
+      const user = result.user;
+      const userInfor = { name: user.displayName, email: user.email };
+      await axios.post("http://localhost:6001/users", userInfor);
+      alert("Account Creation Successful");
+      document.getElementById("my_modal_5").close();
+      navigate("/");
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
   };
+
   return (
     <dialog id="my_modal_5" className="modal modal-middle sm:modal-middle">
       <div className="modal-box">
         <div className="flex flex-col justify-center mt-0 modal-action">
-          {/*start form section  */}
-          <form
-            className="card-body"
-            method="dialog"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          {/* Start form section */}
+          <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
             <h3 className="text-lg font-bold">Please Login!</h3>
             <div className="form-control">
               <label className="label">
@@ -72,9 +62,11 @@ const Modal = () => {
                 type="email"
                 placeholder="email"
                 className="input input-bordered"
-                required
-                {...register("email")}
+                {...register("email", { required: true })}
               />
+              {errors.email && (
+                <p className="text-xs italic text-red">Email is required</p>
+              )}
             </div>
             <div className="form-control">
               <label className="label">
@@ -84,25 +76,22 @@ const Modal = () => {
                 type="password"
                 placeholder="password"
                 className="input input-bordered"
-                required
-                {...register("password")}
+                {...register("password", { required: true })}
               />
+              {errors.password && (
+                <p className="text-xs italic text-red">Password is required</p>
+              )}
               <label className="mt-1 label">
                 <a href="#" className="label-text-alt link link-hover">
                   Forgot password?
                 </a>
               </label>
             </div>
-            {/*start error txt */}
-            {errorMessage ? (
+            {/* Error message */}
+            {errorMessage && (
               <p className="text-xs italic text-red">{errorMessage}</p>
-            ) : (
-              ""
             )}
-
-            {/*end error txt */}
-
-            {/*start login button*/}
+            {/* Login button */}
             <div className="mt-6 form-control">
               <input
                 type="submit"
@@ -110,29 +99,24 @@ const Modal = () => {
                 className="btn bg-[#FF9800] text-white"
               />
             </div>
-            {/*end login button*/}
-            {/*start signup txt */}
+            {/* Signup link */}
             <p className="my-2 text-center">
-              Do not have an account ?{" "}
+              Do not have an account?{" "}
               <Link to="/signup" className="ml-1 underline text-red">
-                signup now
+                Sign up now
               </Link>
-              {""}
             </p>
-            {/*end sign up txt */}
-            {/*start close btn */}
+            {/* Close button */}
             <button
-              htmlFor="my_modal_5"
+              type="button"
               onClick={() => document.getElementById("my_modal_5").close()}
               className="absolute btn btn-sm btn-circle btn-ghost right-2 top-2"
             >
               ✕
             </button>
-            {/*end close btn*/}
           </form>
-          {/*end Form section */}
-
-          {/*start log with social media*/}
+          {/* End form section */}
+          {/* Log in with social media */}
           <div className="mb-5 space-x-5 text-center">
             <button
               className="btn btn-circle hover:bg-orange"
@@ -147,7 +131,7 @@ const Modal = () => {
               <FaGithub />
             </button>
           </div>
-          {/*end log with social media*/}
+          {/* End log in with social media */}
         </div>
       </div>
     </dialog>
