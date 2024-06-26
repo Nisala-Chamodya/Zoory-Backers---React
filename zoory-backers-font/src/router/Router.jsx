@@ -9,6 +9,7 @@ import CartPage from "../pages/shop/CartPage";
 import DashboardLayout from "../layout/DashboardLayout";
 import Dashboard from "../pages/Dashboard/admin/Dashboard";
 import Users from "../pages/Dashboard/admin/Users";
+import AddMenu from "../pages/Dashboard/admin/AddMenu";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -20,17 +21,17 @@ const router = createBrowserRouter([
       },
       {
         path: "/menu",
-       // element:<PrivateRouter><Menu/></PrivateRouter>,
-       element:<Menu/>,
+        // element:<PrivateRouter><Menu/></PrivateRouter>,
+        element: <Menu />,
       },
       {
-        path:"/cart-page",
-        element:<CartPage/>
+        path: "/cart-page",
+        element: <CartPage />,
       },
       {
-        path:"/update-profile",
-        element:<UpdateProfile/>
-      }
+        path: "/update-profile",
+        element: <UpdateProfile />,
+      },
     ],
   },
   {
@@ -38,20 +39,23 @@ const router = createBrowserRouter([
     element: <Signup />,
   },
   {
-    path:'/dashboard',
-    element:<DashboardLayout/>,
-    children:[
+    path: "/dashboard",
+    element: <DashboardLayout />,
+    children: [
       {
-        path:"",
-        element:<Dashboard/>
+        path: "",
+        element: <Dashboard />,
       },
       {
-        path:"users",
-        element:<Users/>
-      }
-
-    ]
-  }
+        path: "users",
+        element: <Users />,
+      },
+      {
+        path: "add-menu",
+        element: <AddMenu />,
+      },
+    ],
+  },
 ]);
 
 export default router;
