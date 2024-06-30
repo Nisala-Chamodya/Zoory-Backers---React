@@ -1,4 +1,5 @@
-import React from "react";
+{
+  /* import React from "react";
 import useAuth from "./useAuth";
 import useAxiosSecure from "./useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
@@ -24,4 +25,37 @@ const useAdmin = () => {
   return [isAdmin, isAdminLoading];
 };
 
+export default useAdmin;*/
+}
+import React from "react";
+import useAuth from "./useAuth";
+import useAxiosSecure from "./useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+
+const useAdmin = () => {
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+  const {
+    refetch,
+    data: isAdmin,
+    isPending: isAdminLoading,
+  } = useQuery({
+    queryKey: [user?.email, "isAdmin"],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`users/admin/${user?.email}`, {
+        //header ek thibbe nh
+        headers: {
+          Authorization: `${localStorage.getItem("access-token")}`,
+        },
+      });
+      console.log(res.data);
+      return res.data?.admin;
+    },
+  });
+  return [isAdmin, isAdminLoading];
+};
+
 export default useAdmin;
+{
+  /* useAdmin,useRoutes,useController,verifyAdmin check this*/
+}

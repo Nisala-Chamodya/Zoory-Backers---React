@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
-import { FaTrash } from 'react-icons/fa';
-import useCart from '../../hooks/useCart';
-import Swal from 'sweetalert2';
-import { AuthContext } from '../../contexts/AuthProvider';
-import { Link } from 'react-router-dom';
+import React, { useContext } from "react";
+import { FaTrash } from "react-icons/fa";
+import useCart from "../../hooks/useCart";
+import Swal from "sweetalert2";
+import { AuthContext } from "../../contexts/AuthProvider";
+import { Link } from "react-router-dom";
 
 const CartPage = () => {
   const [cart, refetch] = useCart();
   const { user } = useContext(AuthContext);
- // const [cartItems, setcartItems] = useState([]);
+  // const [cartItems, setcartItems] = useState([]);
   // Calculate price
   const calculatePrice = (item) => {
     return item.price * item.quantity;
@@ -80,8 +80,20 @@ const CartPage = () => {
     }
   };
 
+  //start handle proceed
+
+  const handleProceed = () => {
+    // console.log("handle Proceed");
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Thank You!!! Shopping with us 😍",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  };
   return (
-    <div className='section-container'>
+    <div className="section-container">
       {/* start loading banner */}
       <div className="section-container bg-gradient-to-r from-[#FAFAFA] from-0% to-[#FCFCFC] to-100%">
         <div className="flex flex-col items-center justify-center gap-8 py-36">
@@ -125,14 +137,24 @@ const CartPage = () => {
                 </td>
                 <td className="font-medium">{item.name}</td>
                 <td>
-                  <button className="btn btn-xs" onClick={() => handleDecrease(item)}>-</button>
+                  <button
+                    className="btn btn-xs"
+                    onClick={() => handleDecrease(item)}
+                  >
+                    -
+                  </button>
                   <input
                     type="number"
                     value={item.quantity}
                     className="w-10 mx-2 overflow-hidden text-center appearance-none"
                     readOnly
                   />
-                  <button className="px-2 btn btn-xs" onClick={() => handleIncrease(item)}>+</button>
+                  <button
+                    className="px-2 btn btn-xs"
+                    onClick={() => handleIncrease(item)}
+                  >
+                    +
+                  </button>
                 </td>
                 <td>R.S {calculatePrice(item).toFixed(2)}</td>
                 <th>
@@ -167,11 +189,20 @@ const CartPage = () => {
           <h3 className="font-medium">Shopping details</h3>
           <p>Total Items : {cart.length}</p>
           <p>Total Price : R.S {orderTotal.toFixed(2)}</p>
-          <Link to="/process-checkout">
-            <button className="mt-5 text-white btn bg-orange">
+          {/*   <Link to="/process-checkout">
+            <button
+              className="mt-5 text-white btn bg-orange"
+              onClick={() => handleProceed()}
+            >
               Proceed Checkout
             </button>
-          </Link>
+          </Link>*/}
+          <button
+            className="mt-5 text-white btn bg-orange"
+            onClick={() => handleProceed()}
+          >
+            Proceed Checkout
+          </button>
         </div>
       </div>
       {/* end customer details */}

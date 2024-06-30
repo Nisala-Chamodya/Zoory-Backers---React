@@ -48,13 +48,15 @@ const sharedLinks = (
 
 const DashboardLayout = () => {
   const isAdmin = true;
-  const { loading } = useAuth();
-  /*  const [isAdmin, isAdminLoading] = useAdmin();
+  {
+    /*  const { loading } = useAuth();
+  const [isAdmin, isAdminLoading] = useAdmin();
 
   if (loading || isAdminLoading) {
     console.log(loading, isAdmin);
     return <p>Loading...</p>;
-  }*/
+  } meek check karanna*/
+  }
 
   return (
     <div>
@@ -100,12 +102,12 @@ const DashboardLayout = () => {
                   Dashboard
                 </Link>
               </li>
-              <li>
+              {/*  <li>
                 <Link to="/dashboard/manage-booking">
                   <FaShoppingBag />
                   Manage Booking
                 </Link>
-              </li>
+              </li>*/}
               <li>
                 <Link to="/dashboard/add-menu">
                   <FaPlusCircle />
@@ -131,8 +133,7 @@ const DashboardLayout = () => {
           </div>
         </div>
       ) : (
-        // <Modal />
-        <p>Thoo admin kenek newei pakayoo</p>
+        <Modal />
       )}
     </div>
   );
